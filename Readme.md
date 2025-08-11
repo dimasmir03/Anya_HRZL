@@ -34,10 +34,14 @@ BitcoinMonitor - это REST API, которое позволяет получа
 
 ### Получение курса биткойна
 
-`GET /bitcoin/price?name=<name>&timestamp=<timestamp>`
+`GET /bitcoin/price`
 
--  `name` - валюта, для которой нужно получить курс биткойна;
--  `timestamp` - время, для которого нужно получить курс биткойна.
+```
+{
+   "coin": "<name>",
+   "timestamp": <timestamp>
+}
+```
 
 ### Добавление валюты в список мониторинга
 
