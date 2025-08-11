@@ -1,4 +1,4 @@
-package bitcoinmonitor
+package main
 
 import (
 	"bitcoinmonitor/internal/application"
