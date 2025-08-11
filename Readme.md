@@ -29,6 +29,9 @@ BitcoinMonitor - это REST API, которое позволяет получа
 
 [<img src="https://run.pstmn.io/button.svg" alt="Run In Postman" style="width: 128px; height: 32px;">](https://app.getpostman.com/run-collection/40053615-105d0e15-2802-4036-86b4-66935449d9e8?action=collection%2Ffork&source=rip_markdown&collection-url=entityId%3D40053615-105d0e15-2802-4036-86b4-66935449d9e8%26entityType%3Dcollection%26workspaceId%3Dd6c028b3-486f-4435-a8e0-ca761725bba1)
 
+* либо импортировать в Postman файл `api/Bitcoin Monitor API.postman_collection.json` (нажмите на кнопку "Run in Postman" выше);
+* либо открыть swagger документацию по адресу `http://localhost:8080/swagger/index.html`.
+
 ### Получение курса биткойна
 
 `GET /bitcoin/price?name=<name>&timestamp=<timestamp>`
