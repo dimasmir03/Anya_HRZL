@@ -4,6 +4,7 @@ import (
 	"bitcoinmonitor/internal/db"
 	"encoding/json"
 	"fmt"
+	"log"
 	"log/slog"
 	"net/http"
 	"strconv"
@@ -38,6 +39,7 @@ func (s *BitcoinService) UpdateMonitoringList() error {
 	for i, coin := range monitoring_coins {
 		s.monitoringList[i] = coin.Name
 	}
+	slog.Info("Monitoring list updated", "list", s.monitoringList)
 	return nil
 
 }
@@ -46,8 +48,8 @@ type BitcoinPrice struct {
 	Price float64 `json:"usd"`
 }
 
-func (s *BitcoinService) StartMonitoring() error {
-	slog.Info("Monitoring started")
+func (s *BitcoinService) InitMonitoringData() error {
+	slog.Info("Bitcoin Service starting")
 	defer s.ticker.Stop()
 
 	coins, err := coingecko.GetCoinList()
@@ -61,7 +63,12 @@ func (s *BitcoinService) StartMonitoring() error {
 	s.UpdateMonitoringList()
 
 	go func() {
+		slog.Info("Monitoring started")
 		for range s.ticker.C {
+			if len(s.monitoringList) == 0 {
+				continue
+			}
+			slog.Info("Monitoring tick")
 			resp, err := http.Get(fmt.Sprintf("https://api.coingecko.com/api/v3/simple/price?ids=%s&vs_currencies=usd", strings.Join(s.monitoringList, ",")))
 			if err != nil {
 				slog.Error("Error getting bitcoin price", err.Error())
@@ -77,9 +84,10 @@ func (s *BitcoinService) StartMonitoring() error {
 				slog.Error("Error decoding bitcoin price", err.Error())
 				continue
 			}
+			log.Println(data)
 			resp.Body.Close()
-			for name, price := range data {
-				if err := s.store.AddBitcoinPrice(name, price.Price); err != nil {
+			for id, price := range data {
+				if err := s.store.AddBitcoinPrice(id, price.Price); err != nil {
 					slog.Error("Error adding bitcoin price", err.Error())
 					continue
 				}
@@ -96,9 +104,11 @@ func (s *BitcoinService) GetBitcoinPriceByName(name string, timestamp int64) (fl
 }
 
 func (s *BitcoinService) AddCurrencyToMonitoring(name string) error {
-	if err := s.store.AddCurrencyToMonitoring(name); err != nil {
+	if err := s.store.AddCoinToMonitoring(name); err != nil {
 		return err
 	}
+	log.Printf("coin %s added to monitoring\n", name)
+
 	if err := s.UpdateMonitoringList(); err != nil {
 		return err
 	}
@@ -106,7 +116,7 @@ func (s *BitcoinService) AddCurrencyToMonitoring(name string) error {
 }
 
 func (s *BitcoinService) RemoveCurrencyFromMonitoring(name string) error {
-	if err := s.store.RemoveCurrencyFromMonitoring(name); err != nil {
+	if err := s.store.RemoveCoinFromMonitoring(name); err != nil {
 		return err
 	}
 	if err := s.UpdateMonitoringList(); err != nil {
@@ -125,10 +135,19 @@ func (s *BitcoinService) GetMonitoringCoins() ([]string, error) {
 		names = append(names, coin.Name)
 	}
 	return names, nil
+	// return coins, nil
 }
 
 func (s *BitcoinService) GetAvailableCoins() ([]string, error) {
-	return s.store.GetAvailableCoins()
+	c, err := s.store.GetAvailableCoins()
+	if err != nil {
+		return nil, err
+	}
+	var names []string
+	for _, coin := range c {
+		names = append(names, coin.Name)
+	}
+	return names, nil
 }
 
 func (s *BitcoinService) StartTimer() error {

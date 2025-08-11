@@ -1,0 +1,141 @@
+basePath: /api/v1
+definitions:
+  model.AvailableCurrencyMonitoring:
+    properties:
+      Name:
+        type: string
+      bitcoin_prices_id:
+        items:
+          $ref: '#/definitions/model.BitcoinPrice'
+        type: array
+      coin_id:
+        type: string
+      id:
+        type: integer
+      monitoring:
+        type: boolean
+      symbol:
+        type: string
+    type: object
+  model.BitcoinPrice:
+    properties:
+      bitcoin_id:
+        type: integer
+      id:
+        type: integer
+      price:
+        type: number
+      timestamp:
+        type: string
+    type: object
+info:
+  contact:
+    email: saenkodmitriiol@gmail.com
+    name: API Support
+  description: Swagger API for Coins Monitor.
+  termsOfService: http://swagger.io/terms/
+  title: Coins Monitor Swagger API
+  version: "1.0"
+paths:
+  /bitcoin/add:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Имя монеты
+        in: body
+        name: coin
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Добавляет валюту в список мониторинга
+  /bitcoin/available:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.AvailableCurrencyMonitoring'
+            type: array
+      summary: Получает список доступных валют
+  /bitcoin/monitoring:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.AvailableCurrencyMonitoring'
+            type: array
+      summary: Получает список мониторингуемых валют
+  /bitcoin/price:
+    get:
+      parameters:
+      - description: Имя монеты
+        in: path
+        name: coin
+        required: true
+        type: string
+      - description: момент времени
+        in: path
+        name: timestamp
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            format: float64
+            type: number
+      summary: Получает курс биткойна по имени валюты и timestamp
+  /bitcoin/remove:
+    post:
+      parameters:
+      - description: Имя монеты
+        in: path
+        name: coin
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Удаляет валюту из списка мониторинга
+  /startmonitor:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Стартует мониторинг
+  /stopmonitor:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Останавливает мониторинг
+swagger: "2.0"

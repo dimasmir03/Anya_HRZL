@@ -27,6 +27,8 @@ BitcoinMonitor - это REST API, которое позволяет получа
 
 ## Использование
 
+[<img src="https://run.pstmn.io/button.svg" alt="Run In Postman" style="width: 128px; height: 32px;">](https://app.getpostman.com/run-collection/40053615-105d0e15-2802-4036-86b4-66935449d9e8?action=collection%2Ffork&source=rip_markdown&collection-url=entityId%3D40053615-105d0e15-2802-4036-86b4-66935449d9e8%26entityType%3Dcollection%26workspaceId%3Dd6c028b3-486f-4435-a8e0-ca761725bba1)
+
 ### Получение курса биткойна
 
 `GET /bitcoin/price?name=<name>&timestamp=<timestamp>`
@@ -38,13 +40,27 @@ BitcoinMonitor - это REST API, которое позволяет получа
 
 `POST /bitcoin/add`
 
--  `name` - валюта, которую нужно добавить в список мониторинга.
+```
+{
+   "coin": "<name>"
+}
+```
+
+coin - имя валюты например Bitcoin
+Имена валюты которые можно добавить можно узнать с помощью команды `GET /bitcoin/available`
 
 ### Удаление валюты из списка мониторинга
 
 `POST /bitcoin/remove`
 
--  `name` - валюта, которую нужно удалить из списка мониторинга.
+```
+{
+   "coin": "<name>"
+}
+```
+
+coin - имя валюты например Bitcoin
+Имена валюты которые моно удалить можно узнать с помощью команды `GET /bitcoin/monitoring`
 
 ### Получение списка мониторингуемых валют
 
@@ -54,14 +70,6 @@ BitcoinMonitor - это REST API, которое позволяет получа
 
 `GET /bitcoin/available`
 
-### Старт мониторинга
-
-`GET /startmonitoring`
-
-### Стоп мониторинга
-
-`GET /stopmonitoring`
-
 ## Настройка
 
 ### ENV переменные
@@ -69,16 +77,3 @@ BitcoinMonitor - это REST API, которое позволяет получа
 -  `DB_URL` - URL для подключения к базе данных;
 -  `APP_PORT` - порт, на котором будет запущено приложение;
 -  `APP_HOST` - хост, на котором будет запущено приложение.
-
-### Docker Compose
-
-Вы можете использовать [Docker Compose](https://docs.docker.com/compose/) для запуска приложения.
-
-## Технологии
-
--  [Golang](https://golang.org/) - язык программирования;
--  [Gin](https://gin-gonic.com/) - фреймворк для создания REST API;
--  [GORM](https://gorm.io/) - ORM для работы с базой данных;
--  [Docker](https://www.docker.com/) - контейнеризация;
--  [PostgreSQL](https://www.postgresql.org/) - база данных;
--  [CoinGecko API](https://www.coingecko.com/ru/api) - API для получения информации о курсе биткойна.

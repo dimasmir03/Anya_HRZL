@@ -5,8 +5,8 @@ import "time"
 type AvailableCurrencyMonitoring struct {
 	ID           int64          `json:"id" gorm:"primary_key;tableName:available_currency_monitoring"`
 	CoinID       string         `json:"coin_id"`
-	Name         string         `json:"name"`
-	Description  string         `json:"description"`
+	Symbol       string         `json:"symbol"`
+	Name         string         `json:"Name"`
 	Monitoring   bool           `json:"monitoring" gorm:"default:false"`
 	BitcoinPrice []BitcoinPrice `json:"bitcoin_prices_id" gorm:"foreignKey:bitcoin_id"`
 }

@@ -28,9 +28,11 @@ func (a *Application) Run() {
 		panic(err)
 	}
 	service := service.NewBitcoinService(store)
-	service.StartMonitoring()
+	service.InitMonitoringData()
+	service.StartTimer()
 	ctrl := controller.NewBitcoinController(service)
 	a.e.Use(middleware.Logger())
+	a.e.Use(middleware.Gzip())
 	transport.NewRouter(a.e, ctrl)
 	a.e.Logger.Fatal(a.e.Start(fmt.Sprintf("%s:%d", cfg.Host, cfg.Port)))
 
